@@ -6,3 +6,11 @@ In this repository you can find the simulation source code for paper title "Unsu
 
 The channel model we used is a realistic ray-tracing channel model introduced in "“DeepMIMO: A Generic Deep Learning Dataset for Millimeter Wave and Massive MIMO Applications". <https://arxiv.org/abs/1902.06435>
 
+
+Repository is consist of:
+
+1.DATASET.md: all parameters realted to system model such as number of users, number of antennas, etc.
+2.DataBase_dataSet64x8x4_130dB_0129201820.npy: core dataset
+3.Codebook_ij: design codebook using algorithm proposed in the paper.
+4..Py files: simulation source codes
+
