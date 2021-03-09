@@ -11,7 +11,7 @@ The repository consist of:
 
 **1.DATASET.md:** all parameters related to system model such as number of users, number of antennas, etc.
 
-**2.Codebook_ij:** design codebook using algorithm proposed in the paper.
+**2.Codebook_ij:** designed codebook using the proposed algorithm in the paper.
 
 **3..py files:** simulation source codes
 
