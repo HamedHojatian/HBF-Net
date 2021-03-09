@@ -15,9 +15,9 @@ class Net_m_task_CNN(nn.Module):
         self.bn2 = nn.BatchNorm2d(num_features=out_channel)
         self.do2 = nn.Dropout2d(p_dropout)
 
-        self.cnn3 = nn.Conv2d(in_channels=out_channel, out_channels=8, kernel_size=kernel_s, stride=1, padding=padding)
+        self.cnn3 = nn.Conv2d(in_channels=out_channel, out_channels=out_channel/2, kernel_size=kernel_s, stride=1, padding=padding)
         self.relu3 = nn.LeakyReLU()
-        self.bn3 = nn.BatchNorm2d(num_features=8)
+        self.bn3 = nn.BatchNorm2d(num_features=out_channel/2)
         self.do3 = nn.Dropout2d(p_dropout)
 
         # Fully connected 1 (readout)
