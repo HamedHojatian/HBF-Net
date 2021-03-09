@@ -7,7 +7,7 @@ In this repository you can find the simulation source code for paper title "Unsu
 A realistic ray-tracing channel model is considered to evaluate the proposed solution. It has been introduced by Alkhateeb, et al, in "DeepMIMO: A Generic Deep Learning Dataset for Millimeter Wave and Massive MIMO Applications". <https://arxiv.org/abs/1902.06435>
 
 
-Repository is consist of:
+Repository consist of:
 
 **1.DATASET.md:** all parameters related to system model such as number of users, number of antennas, etc.
 
