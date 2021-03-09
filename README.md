@@ -18,4 +18,7 @@ Repository is consist of:
 **DataBase_dataSet64x8x4_130dB_0129201820.npy:** core dataset for "limited area" scenario consist of CSI, RSSI, near optimal HSHO solutions. You can find it here:
 https://drive.google.com/file/d/1iXR4Zv6kBsp6NUw2bdWSGgBa6uudMKbc/view?usp=sharing
 
+Requirements:
+1. torch 1.6.0
+2. numpy 1.19.2
 
