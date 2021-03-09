@@ -147,7 +147,7 @@ if BF_approach == 'AFP_Net':
             # Set gradient to 0.
             optimizer_m_task.zero_grad()
 
-            # Feed forward Regon multi-tasking DNN
+            # Feed forward multi-tasking DNN
             Model_m_task.train()
             out1_reg, out2_reg, out_clas = Model_m_task(Inputs_MT)
 
@@ -251,7 +251,7 @@ elif BF_approach == 'HBF_Net':
             # Set gradient to 0.
             optimizer_m_task.zero_grad()
 
-            # Feed forward Regon multi-tasking DNN
+            # Feed forward multi-tasking DNN
             Model_m_task.train()
             out1_reg, out2_reg, out_clas = Model_m_task(Inputs_Reg)
 
