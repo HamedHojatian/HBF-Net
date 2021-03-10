@@ -1,8 +1,9 @@
-## Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming
-
+# Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming
 
 
 In this repository you can find the simulation source code for paper title "Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming". <https://arxiv.org/abs/2007.00038>
+
+## Channel model
 
 A realistic ray-tracing channel model is considered to evaluate the proposed solution. It has been introduced by Alkhateeb, et al, in "DeepMIMO: A Generic Deep Learning Dataset for Millimeter Wave and Massive MIMO Applications". <https://arxiv.org/abs/1902.06435>
 
