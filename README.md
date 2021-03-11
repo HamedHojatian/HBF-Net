@@ -18,6 +18,8 @@ The repository consist of:
 
 **3..py files:** simulation source codes
 
+
+## Dataset
 **DataBase_dataSet64x8x4_130dB_0129201820.npy:** core dataset for "limited area" scenario consist of CSI, RSSI, near optimal HSHO solutions. You can find it here:
 https://drive.google.com/file/d/1iXR4Zv6kBsp6NUw2bdWSGgBa6uudMKbc/view?usp=sharing
 It is the core dataset with 1e4 samples. It consist of RSSI, channel, near-optimal HBF and FDP, user position. To train the DNN well enough we use 1e6 samples generted from deepMIMO channel model. The core dataset is only used for evaluate the DNN and codebook design.
