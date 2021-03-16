@@ -28,6 +28,6 @@ It is the core dataset with 1e4 samples. It consist of RSSI, channel, near-optim
 2. numpy 1.19.2
 
 ## Copyright
-Feel free to use this code as a starting point for your own research project. If you do, we kindly ask that you cite the associated paper. 
+Feel free to use this code as a starting point for your own research project. If you do, we kindly ask that you cite the following paper: "Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming". <https://arxiv.org/abs/2007.00038> 
 
 Copyright (C): GNU General Public License v3.0 or later
