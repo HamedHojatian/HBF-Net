@@ -30,4 +30,13 @@ It is the core dataset with 1e4 samples. It consist of RSSI, channel, near-optim
 ## Copyright
 Feel free to use this code as a starting point for your own research project. If you do, we kindly ask that you cite the following paper: "Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming". <https://arxiv.org/abs/2007.00038> 
 
+@misc{hojatian2020unsupervised,
+      title={Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming}, 
+      author={Hamed Hojatian and Jeremy Nadal and Jean-Francois Frigon and Francois Leduc-Primeau},
+      year={2020},
+      eprint={2007.00038},
+      archivePrefix={arXiv},
+      primaryClass={eess.SP}
+}
+
 Copyright (C): GNU General Public License v3.0 or later
