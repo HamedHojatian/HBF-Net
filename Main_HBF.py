@@ -1,3 +1,8 @@
+"""
+Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming.
+Python codes prepared by Hamed Hojatian, 2020, please cite above paper if you use
+"""
+
 import numpy as np
 import os
 import csv
