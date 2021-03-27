@@ -1,19 +1,10 @@
 """
-Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming.
-Python codes prepared by Hamed Hojatian, 2020. E-mail me for questions via: hamed.hojatian.ca@gmail.com
+Source code for paper "Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming". https://arxiv.org/abs/2007.00038.
+Python codes prepared by Hamed Hojatian, 2020. 
+E-mail me for questions via: hamed.hojatian.ca@gmail.com.
 
 Feel free to use this code as a starting point for your own research project. 
-If you do, we kindly ask that you cite the following paper:
-"Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming". https://arxiv.org/abs/2007.00038
-
-@misc{hojatian2020unsupervised,
-      title={Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming}, 
-      author={Hamed Hojatian and Jeremy Nadal and Jean-Francois Frigon and Francois Leduc-Primeau},
-      year={2020},
-      eprint={2007.00038},
-      archivePrefix={arXiv},
-      primaryClass={eess.SP}
-}
+If you do, we kindly ask that you cite the above paper.
 """
 
 import numpy as np
