@@ -3,6 +3,8 @@ Source code for paper "Unsupervised Deep Learning for Massive MIMO Hybrid Beamfo
 Python codes prepared by Hamed Hojatian, 2020. 
 E-mail me for questions via: hamed.hojatian.ca@gmail.com.
 
+There is an option to select "HBF-Net" or "AFP-Net". 
+
 Feel free to use this code as a starting point for your own research project. 
 If you do, we kindly ask that you cite the above paper.
 """
