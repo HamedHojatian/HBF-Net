@@ -13,6 +13,7 @@ import numpy as np
 import os
 import csv
 import torch.nn as nn
+import torch.nn.functional as F
 import math
 from numpy import genfromtxt
 import torch as th
@@ -213,7 +214,7 @@ if BF_approach == 'AFP_Net':
                         pred1_reg, pred2_reg, pred_class = Model_m_task(testInputs_Reg)
 
                         # find the maximum probability as predication of classification
-                        _, predicted = th.max(pred_class, 1)
+                        _, predicted = th.max(F.softmax(pred_class, 1), 1)
 
                         # mapping in the codebook to find the corresponding analog precoder
                         An_Predr = codesr[predicted, :].to(device)
@@ -301,7 +302,7 @@ elif BF_approach == 'HBF_Net':
                         pred1_reg, pred2_reg, pred_class = Model_m_task(testInputs_Reg)
 
                         # find the maximum probability as predication of classification
-                        _, predicted = th.max(pred_class, 1)
+                        _, predicted = th.max(F.softmax(pred_class, 1), 1)
 
                         # mapping in the codebook to find the corresponding analog precoder
                         An_Predr = codesr[predicted, :].to(device)
