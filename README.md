@@ -1,7 +1,7 @@
 # Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming
 
 
-In this repository you can find the simulation source code of. "[Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming](<https://ieeexplore.ieee.org/document/9439874>)"
+In this repository you can find the simulation source code of. "[Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming](<https://ieeexplore.ieee.org/document/9439874>)", IEEE Transactions on Wireless Communications.
 
 
 ## Channel model
@@ -28,7 +28,7 @@ It is the core dataset with 1e4 samples. It consist of RSSI, channel, near-optim
 2. numpy 1.19.2
 
 ## Copyright
-Feel free to use this code as a starting point for your own research project. If you do, we kindly ask that you cite the following paper: "[Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming](<https://ieeexplore.ieee.org/document/9439874>)".
+Feel free to use this code as a starting point for your own research project. If you do, we kindly ask that you cite the following paper: "[Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming](<https://ieeexplore.ieee.org/document/9439874>)", IEEE Transactions on Wireless Communications.
 
 ```
 @ARTICLE{9439874,
