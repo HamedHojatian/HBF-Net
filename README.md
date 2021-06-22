@@ -1,7 +1,7 @@
 # Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming
 
 
-In this repository you can find the simulation source code of. "[Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming](https://ieeexplore.ieee.org/document/9439874)", IEEE Transactions on Wireless Communications.
+In this repository you can find the simulation source code of: "[Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming](https://ieeexplore.ieee.org/document/9439874)", IEEE Transactions on Wireless Communications.
 
 
 ## Channel model
