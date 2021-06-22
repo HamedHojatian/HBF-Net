@@ -24,7 +24,7 @@ A realistic ray-tracing channel model is considered to evaluate the proposed sol
 It is the core dataset with 1e4 samples. It consist of RSSI, channel, near-optimal HBF and FDP, user position. To train the DNN well enough we use 1e6 samples generted from deepMIMO channel model. The core dataset is only used for evaluate the DNN and codebook design.
 
 ## Requirements
-1. torch 1.7.0
+1. torch 1.7.2
 2. numpy 1.19.2
 
 ## Copyright
