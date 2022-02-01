@@ -36,9 +36,9 @@ Feel free to use this code as a starting point for your own research project. If
   journal={IEEE Transactions on Wireless Communications}, 
   title={Unsupervised Deep Learning for Massive MIMO Hybrid Beamforming}, 
   year={2021},
-  volume={},
-  number={},
-  pages={1-1},
+  volume={20},
+  number={11},
+  pages={7086-7099},
   doi={10.1109/TWC.2021.3080672}}
 ```
 Copyright (C): GNU General Public License v3.0 or later
