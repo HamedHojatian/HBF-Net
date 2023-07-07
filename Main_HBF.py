@@ -67,7 +67,6 @@ elif BF_approach == 'AFP_Net':
     n_output_reg = Us * Mr
 else:
     raise Exception('BF_approach value is wrong !!')
-
 ###############################################################################
 # Main Menu of configuration
 ###############################################################################
@@ -84,13 +83,14 @@ Main_Menu = Initialization_Model_Params(DB_name,
 ###############################################################################
 # Reading Database
 ###############################################################################
-DataBase, uniq_dis_label = Main_Menu.Data_Load()
+DataBase, uniq_dis_label, sr_HBF, sr_FDP = Main_Menu.Data_Load()
 
 ###############################################################################
 # Codeword dictionary
 ###############################################################################
 codeword_C, n_output_clas, codesr, codesi = Main_Menu.Code_Read()
-
+codesr = codesr.to(device)
+codesi = codesi.to(device)
 ###############################################################################
 # Training-set and test-set generation
 ###############################################################################
@@ -104,7 +104,7 @@ print(colored('The size of Test set is ', 'yellow'), len(test_dataset))
 ###############################################################################
 # Dataloaders
 ###############################################################################
-my_dataloader = th.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+my_dataloader = th.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 my_testloader = th.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 ###############################################################################
@@ -147,7 +147,7 @@ if BF_approach == 'AFP_Net':
     criterium_clas_4d = Loss_HBF_Rate_Based_4D(Us, Mr, Nrf, Noise_pwr).to(device)
     criterium_reg = Loss_FDP_Rate_Based(Us, Mr, Nrf, Noise_pwr).to(device)
     for i in range(1, epoch_size):   # Main traning loop
-        for k, (channelR, channelI, alpha, RSSI, UR, UI, AR, AI, index, WR, WI, deltaR, deltaI, userp) in enumerate(my_dataloader):  # Loading data from data loader
+        for k, (channelR, channelI, RSSI) in enumerate(my_dataloader):  # Loading data from data loader
 
             # Input data dimension check (CNN)
             Inputs_MT = Networks_Main_Menu.Inp_MT(RSSI)
@@ -198,14 +198,12 @@ if BF_approach == 'AFP_Net':
                     R_predicted_FDP = []
                     Rate_Ratio_HBF = []
                     Rate_Ratio_FDP = []
-                    for (tchannelR, tchannelI, talpha, tRSSI, tUR, tUI, tAR, tAI, tindex, tWR, tWI, tdeltaR, tdeltaI, tup) in my_testloader:
+                    for (tchannelR, tchannelI, tRSSI) in my_testloader:
 
                         # Input data dimension check (CNN)
                         testInputs_Reg = Networks_Main_Menu.Inp_MT(tRSSI)
 
                         # Loading the near-optimal digital precoder, CSI (real and imaginary)
-                        T_wR = tWR.reshape(-1, Us, Nrf).to(device)
-                        T_wI = tWI.reshape(-1, Us, Nrf).to(device)
                         T_channelR = tchannelR.reshape(-1, Us, Mr).to(device)
                         T_channelI = tchannelI.reshape(-1, Us, Mr).to(device)
 
@@ -227,31 +225,25 @@ if BF_approach == 'AFP_Net':
                         # rate calculation
                         # DNN HBF
                         R_predicted_HBF.append(criterium_clas_4d.evaluate_rate(w_prer, w_prei, T_channelR, T_channelI, An_Predr, An_Predi))
-                        # near-optimal HBF
-                        R_optimum_HBF.append(criterium_clas_4d.evaluate_rate(T_wR, T_wI, T_channelR, T_channelI, tAR.to(device), tAI.to(device)))
                         # DNN FDP
                         R_predicted_FDP.append(criterium_reg.evaluate_rate(pred1_reg, pred2_reg, T_channelR, T_channelI))
-                        # near-optimal HBF
-                        R_optimum_FDP.append(criterium_reg.evaluate_rate(tUR.to(device), tUI.to(device), T_channelR, T_channelI))
 
                 # Average over all mini-batches
                 RATE_Predicted_HBF = sum(R_predicted_HBF) / len(R_predicted_HBF)
                 RATE_Predicted_FDP = sum(R_predicted_FDP) / len(R_predicted_FDP)
-                RATE_Optimum_HBF = sum(R_optimum_HBF) / len(R_optimum_HBF)
-                RATE_Optimum_FDP = sum(R_optimum_FDP) / len(R_optimum_FDP)
-                RATE_Ratie_HBF = 100 * RATE_Predicted_HBF / RATE_Optimum_HBF
-                RATE_Ratie_FDP = 100 * RATE_Predicted_FDP / RATE_Optimum_FDP
+                RATE_Ratie_HBF = 100 * RATE_Predicted_HBF / sr_HBF
+                RATE_Ratie_FDP = 100 * RATE_Predicted_FDP / sr_FDP
 
                 scheduler_MT.step(RATE_Predicted_HBF)
 
                 print('Iter:==>{:3d} Loss_FDP:{:.3f} Loss_Class:{:.3f} Rate_opt_HBF:{:.2f} Rate_opt_FDP:{:.2f} Rate_pre_HBF:{:.2f} Rate_pre_FDP:{:.2f} Ratio_HBF:{:.2f}% Ratio_FDP:{:.2f}%'.
-                    format(i, loss_reg, loss_clas, RATE_Optimum_HBF, RATE_Optimum_FDP, RATE_Predicted_HBF, RATE_Predicted_FDP, RATE_Ratie_HBF, RATE_Ratie_FDP))
+                    format(i, loss_reg, loss_clas, sr_HBF, sr_FDP, RATE_Predicted_HBF, RATE_Predicted_FDP, RATE_Ratie_HBF, RATE_Ratie_FDP))
 
 elif BF_approach == 'HBF_Net':
     # initialing the loss function
     criterium_clas_4d = Loss_HBF_Rate_Based_4D(Us, Mr, Nrf, Noise_pwr).to(device)
     for i in range(1, epoch_size):
-        for k, (channelR, channelI, alpha, RSSI, UR, UI, AR, AI, index, WR, WI, deltaR, deltaI, userp) in enumerate(my_dataloader):
+        for k, (channelR, channelI, RSSI) in enumerate(my_dataloader):
 
             # Input data dimension check (CNN)
             Inputs_Reg = Networks_Main_Menu.Inp_MT(RSSI)
@@ -286,14 +278,12 @@ elif BF_approach == 'HBF_Net':
                 R_optimum_HBF = []
                 Rate_Ratio_HBF = []
                 with th.no_grad():
-                    for (tchannelR, tchannelI, talpha, tRSSI, tUR, tUI, tAR, tAI, tindex, tWR, tWI, tdeltaR, tdeltaI, tup) in my_testloader:
+                    for (tchannelR, tchannelI, tRSSI) in my_testloader:
 
                         # Input data dimension check (CNN)
                         testInputs_Reg = Networks_Main_Menu.Inp_MT(tRSSI)
 
                         # Loading the near-optimal digital precoder, CSI (real and imaginary)
-                        T_wR = tWR.reshape(-1, Us, Nrf).to(device)
-                        T_wI = tWI.reshape(-1, Us, Nrf).to(device)
                         T_channelR = tchannelR.reshape(-1, Us, Mr).to(device)
                         T_channelI = tchannelI.reshape(-1, Us, Mr).to(device)
 
@@ -305,25 +295,22 @@ elif BF_approach == 'HBF_Net':
                         _, predicted = th.max(F.softmax(pred_class, 1), 1)
 
                         # mapping in the codebook to find the corresponding analog precoder
-                        An_Predr = codesr[predicted, :].to(device)
-                        An_Predi = codesi[predicted, :].to(device)
+                        An_Predr = codesr[predicted, :]
+                        An_Predi = codesi[predicted, :]
                         w_prer, w_prei = pred1_reg.view(-1, Us, Nrf), pred2_reg.view(-1, Us, Nrf)
 
                         # rate calculation
                         # DNN HBF
                         R_predicted_HBF.append(criterium_clas_4d.evaluate_rate(w_prer, w_prei, T_channelR, T_channelI, An_Predr, An_Predi))
-                        # near-optimal HBF
-                        R_optimum_HBF.append(criterium_clas_4d.evaluate_rate(T_wR, T_wI, T_channelR, T_channelI, tAR.to(device), tAI.to(device)))
 
                 # Average over all mini-batches
                 RATE_Predicted_HBF = sum(R_predicted_HBF) / len(R_predicted_HBF)
-                RATE_Optimum_HBF = sum(R_optimum_HBF) / len(R_optimum_HBF)
-                RATE_Ratie_HBF = 100 * RATE_Predicted_HBF / RATE_Optimum_HBF
+                RATE_Ratie_HBF = 100 * RATE_Predicted_HBF / sr_HBF
 
                 scheduler_MT.step(RATE_Predicted_HBF)
 
                 print('Iter:==>{:3d} Loss_Class:{:.3f} Rate_opt_HBF:{:.2f} Rate_pre_HBF:{:.2f} Ratio_HBF:{:.2f}%'.
-                    format(i, loss_clas, RATE_Optimum_HBF, RATE_Predicted_HBF, RATE_Ratie_HBF))
+                    format(i, loss_clas, sr_HBF, RATE_Predicted_HBF, RATE_Ratie_HBF))
 
 else:
     raise Exception('BF_approach is wrong !!')
