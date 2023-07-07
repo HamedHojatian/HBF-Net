@@ -12,61 +12,65 @@ import time
 
 # Database ####################################################################################################################
 class Data_Reader(data.Dataset):
-    def __init__(self, filename, Us, Mr, Nrf, K):
+    def __init__(self, filename, Us, Mr, Nrf, K, Noise_pwr):
 
         print(colored('You select core dataset', 'cyan'))
         print(colored(filename, 'yellow'), 'is loading ... ')
         np_data = np.load(filename)
 
-        self.channelR = np_data[:, 0:Us * Mr].real.astype(float)
-        self.channelI = np_data[:, 0:Us * Mr].imag.astype(float)
+        self.channelR = np_data['channel'].real.astype(float)
+        self.channelI = np_data['channel'].imag.astype(float)
 
-        self.alpha = np_data[:, Us * Mr: (Us * Mr) + (Us * K)].real.astype(float)
+        self.RSSI_N = np_data['RSSI_N'].real.astype(float)
 
-        self.RSSI_N = np_data[:, (Us * Mr) + (Us * K):(Us * Mr) + (2 * Us * K)].real.astype(float)
+        self.UR = np_data['U'].real.astype(float)
+        self.UI = np_data['U'].imag.astype(float)
 
-        self.UR = np_data[:, (Us * Mr) + (2 * Us * K):(2 * Us * Mr) + 
-                          (2 * Us * K)].real.astype(float)
-        self.UI = np_data[:, (Us * Mr) + (2 * Us * K):(2 * Us * Mr) + 
-                          (2 * Us * K)].imag.astype(float)
+        self.AR = np_data['A'].real.astype(float)
+        self.AI = np_data['A'].imag.astype(float)
 
-        self.AR = np_data[:, Us * (2 * Mr + 2 * K):Us * (2 * Mr + 2 * K) + 
-                          (Nrf * Mr)].real.astype(float)
-        self.AI = np_data[:, Us * (2 * Mr + 2 * K):Us * (2 * Mr + 2 * K) + 
-                          (Nrf * Mr)].imag.astype(float)
+        self.WR = np_data['W'].real.astype(float)
+        self.WI = np_data['W'].imag.astype(float)
 
-        self.target = np_data[:, Us * (2 * Mr + 2 * K) + (Nrf * Mr):Us * (2 * Mr + 2 * K) + 
-                              (Nrf * Mr) + 1].real.astype(int)
-
-        self.WR = np_data[:, Us * (2 * Mr + 2 * K) + (Nrf * Mr) + 1:Us * 
-                          (2 * Mr + 2 * K + Nrf) + (Nrf * Mr) + 1].real.astype(float)
-        self.WI = np_data[:, Us * (2 * Mr + 2 * K) + (Nrf * Mr) + 1:Us * 
-                          (2 * Mr + 2 * K + Nrf) + (Nrf * Mr) + 1].imag.astype(float)
-
-        self.deltaR = np_data[:, Us * (2 * Mr + 2 * K + Nrf) + (Nrf * Mr) + 1:Us * 
-                              (2 * Mr + 3 * K + Nrf) + (Nrf * Mr) + 1].real.astype(float)
-        self.deltaI = np_data[:, Us * (2 * Mr + 2 * K + Nrf) + (Nrf * Mr) + 1:Us * 
-                              (2 * Mr + 3 * K + Nrf) + (Nrf * Mr) + 1].imag.astype(float)
-
-        self.userp = np_data[:, Us * (2 * Mr + 3 * K + Nrf) + (Nrf * Mr) + 1: Us * 
-                             (2 * Mr + 3 * K + Nrf + 2) + (Nrf * Mr) + 1].real.astype(float)
-
-        self.n_samples = np_data.shape[0]
+        self.Noise_pwr = Noise_pwr
+        
+        self.n_samples = self.channelR.shape[0]
 
     def __len__(self):
         return self.n_samples
 
     def uniq_clas(self):
-        uniq = np.unique(self.target, return_counts=True)
-        NO_Class = np.unique(self.target).shape[0]
+        codes = np.load('Codebook_ij.npz')['codebook']
+        NO_Class = len(codes)
         print(colored("The number of Unique AP in I1: ", "green"), NO_Class)
-        return np.max(uniq[1]) * 100 / uniq[1].sum()
+        return NO_Class
+    
+    def rate_calculator_3d_np(self, FDP, channel):  #      FDP = (i, Nt, Nu, 1)         H = (i, Nu, 1, Nt)
+        W = np.einsum('nij,njk->nik', np.conj(channel), FDP)
+        diag_W = np.diagonal(np.abs(W) ** 2, axis1=1, axis2=2)
+        SINR = diag_W / (np.sum(np.abs(W) ** 2, 2) - diag_W + self.Noise_pwr)
+        userRates = np.log2(1 + SINR)
+        sumRate = userRates.sum(1)
+        return sumRate
+    
+    def optimum_HBF(self):
+        A = self.AR + 1j*self.AI
+        W = self.WR + 1j*self.WI
+        channel = self.channelR + 1j*self.channelI
+        FDP_AW = np.einsum('nij,njk->nik', A, W)
+        FDP_AW = FDP_AW / np.linalg.norm(FDP_AW, axis=(1,2), keepdims=True)
+        sr_HBF = Data_Reader.rate_calculator_3d_np(self, FDP_AW, channel)
+        return sr_HBF.mean()
+    
+    def optimum_FDP(self):
+        U = self.UR + 1j*self.UI
+        channel = self.channelR + 1j*self.channelI
+        U = U / np.linalg.norm(U, axis=(1,2), keepdims=True)
+        sr_FDP = Data_Reader.rate_calculator_3d_np(self, U, channel)
+        return sr_FDP.mean()
 
     def __getitem__(self, index):
-        return torch.Tensor(self.channelR[index]), torch.Tensor(self.channelI[index]), torch.Tensor(self.alpha[index]), \
-            torch.Tensor(self.RSSI_N[index]), torch.Tensor(self.UR[index]), torch.Tensor(self.UI[index]), torch.Tensor(self.AR[index]), \
-                torch.Tensor(self.AI[index]), torch.LongTensor(self.target[index]), torch.Tensor(self.WR[index]), torch.Tensor(self.WI[index]), \
-                    torch.Tensor(self.deltaR[index]), torch.Tensor(self.deltaI[index]), torch.Tensor(self.userp[index])
+        return torch.Tensor(self.channelR[index]), torch.Tensor(self.channelI[index]), torch.Tensor(self.RSSI_N[index])
 
 # readme reader for HBF initial parameters ####################################################################################
 def md_reader(DB_name):
@@ -101,13 +105,15 @@ class Initialization_Model_Params(object):
         self.dev_id = device_ids
 
     def Data_Load(self):
-        DataBase = Data_Reader(''.join(('DataBase_', self.DB_name, '.npy')),
-                               self.Us, self.Mr, self.Nrf, self.K)
+        DataBase = Data_Reader(''.join(('DataBase_', self.DB_name, '.npz')),
+                               self.Us, self.Mr, self.Nrf, self.K, self.Noise_pwr)
         uniq_dis_label = DataBase.uniq_clas()
-        return DataBase, uniq_dis_label
+        sr_HBF, sr_FDP = DataBase.optimum_HBF(), DataBase.optimum_FDP()
+        return DataBase, uniq_dis_label, sr_HBF, sr_FDP
 
     def Code_Read(self):
-        codes = genfromtxt('Codebook_ij.csv', delimiter=',', dtype='complex', skip_header=0)
+        codes = np.load('Codebook_ij.npz')['codebook']
+        # codes = genfromtxt('Codebook_ij.csv', delimiter=',', dtype='complex', skip_header=0)
         label = np.arange(len(codes))
         self.n_output_clas = len(codes)
         print(colored("The length of the codebook: ", "green"), len(codes))
